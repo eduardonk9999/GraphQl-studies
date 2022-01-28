@@ -17,17 +17,40 @@ const typeDefs = gql`
   type Query {
     hello: String
     users: [User!]!
+    getUserByEmail(email: String!): User!
+  }
+
+  type Mutation {
+    createUser(name: String!, email: String!): User!
   }
 `;
+
+const users = [
+  { _id: String(Math.random()), name: 'Eduardo', email: 'eduardo@gmail.com', active: true},
+  { _id: String(Math.random()), name: 'Eduardo2', email: 'eduardo2@gmail.com', active: true},
+  { _id: String(Math.random()), name: 'Eduardo3', email: 'eduardo3@gmail.com', active: false}
+]
 
 const resolvers = {
   Query: {
     hello: () => 'Hello world',
-    users: () => [
-      { _id: String(Math.random()), name: 'Eduardo', email: 'eduardo@gmail.com', active: true},
-      { _id: String(Math.random()), name: 'Eduardo2', email: 'eduardo2@gmail.com', active: true},
-      { _id: String(Math.random()), name: 'Eduardo3', email: 'eduardo3@gmail.com', active: false}
-    ]
+    users: () => users,
+    getUserByEmail: (_, args) => {
+      return users.find((user) => user.email === args.email)
+    },
+  },
+  Mutation: {
+    createUser: (_, args) => {
+      const newUser = {
+        _id: String(Math.random()),
+        name: args.name,
+        email: args.email,
+        active: true,
+      }
+
+      users.push(newUser)
+      return newUser;
+    }
   }
 }
 
